@@ -12,6 +12,7 @@ the [Keptn Application Lifecycle working group](https://github.com/keptn/wg-app-
 
 Status of the different features:
 
+
 - ![status](https://img.shields.io/badge/status-stable-brightgreen)
   Observability: expose [OTel](https://opentelemetry.io/) metrics and traces of your deployment.
 - ![status](https://img.shields.io/badge/status-alpha-orange)
