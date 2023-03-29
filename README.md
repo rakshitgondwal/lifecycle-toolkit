@@ -5,7 +5,6 @@
 ![goversion](https://img.shields.io/github/go-mod/go-version/keptn/lifecycle-toolkit?filename=operator%2Fgo.mod)
 ![version](https://img.shields.io/github/v/release/keptn/lifecycle-toolkit)
 [![GitHub Discussions](https://img.shields.io/github/discussions/keptn/lifecycle-toolkit)](https://github.com/keptn/lifecycle-toolkit/discussions)
-
 The goal of this toolkit is to introduce a more “cloud-native” approach for pre- and post-deployment, as well as the
 concept of application health checks.
 It is an incubating project, under the umbrella of
