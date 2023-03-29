@@ -33,3 +33,4 @@ jobs:
         else
           echo ""
           echo "There are no changes in the manifests"
+        fi
