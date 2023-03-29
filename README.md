@@ -79,6 +79,7 @@ for more info.
 
 ## Goals
 
+
 The Keptn Lifecycle Toolkit aims to support Cloud Native teams with:
 
 - Pre-requisite evaluation before deploying workloads and applications
