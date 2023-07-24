@@ -72,6 +72,9 @@ func (s *KeptnMetric) validateKeptnMetric() error {
 	if err = s.validateRangeStep(); err != nil {
 		allErrs = append(allErrs, err)
 	}
+	if err = s.validateAggregation(); err != nil {
+		allErrs = append(allErrs, err)
+	}
 	if len(allErrs) == 0 {
 		return nil
 	}
@@ -107,6 +110,48 @@ func (s *KeptnMetric) validateRangeStep() *field.Error {
 			s.Spec.Range.Step,
 			errors.New("Forbidden! The time interval cannot be parsed. Please check for suitable conventions").Error(),
 		)
+	}
+	return nil
+}
+
+func (s *KeptnMetric) validateAggregation() *field.Error {
+	if s.Spec.Range == nil {
+		return nil
+	}
+	if s.Spec.Range.Step != "" && s.Spec.Range.Aggregation == "" {
+		return field.Required(
+			field.NewPath("spec").Child("range").Child("aggregation"),
+			errors.New("Aggregation field is required if defining the step field").Error(),
+		)
+	}
+	if s.Spec.Range.Step == "" && s.Spec.Range.Aggregation != "" {
+		return field.Required(
+			field.NewPath("spec").Child("range").Child("step"),
+			errors.New("Forbidden! Step interval is required for the aggregation to work").Error(),
+		)
+	}
+	if s.Spec.Range.Step != "" && s.Spec.Range.Aggregation != "" {
+		var correct bool
+		switch s.Spec.Range.Aggregation {
+		case "p95":
+			correct = true
+		case "p90":
+			correct = true
+		case "max":
+			correct = true
+		case "min":
+			correct = true
+		case "median":
+			correct = true
+		}
+
+		if !correct {
+			return field.Invalid(
+				field.NewPath("spec").Child("range").Child("aggregation"),
+				s.Spec.Range.Aggregation,
+				errors.New("Forbidden! The aggregation function is not accepted. Please check for suitable conventions").Error(),
+			)
+		}
 	}
 	return nil
 }

@@ -60,6 +60,8 @@ type RangeSpec struct {
 	Interval string `json:"interval,omitempty"`
 	// Step represents the query resolution step width for the data query
 	Step string `json:"step,omitempty"`
+	// Aggregation defines as the type of aggregation function to be applied on the data
+	Aggregation string `json:"aggregation,omitempty"`
 }
 
 // +kubebuilder:object:root=true

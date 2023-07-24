@@ -95,24 +95,27 @@ func (r *KeptnMetricReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{Requeue: false}, err2
 	}
 
-	reconcile := ctrl.Result{Requeue: true, RequeueAfter: 10 * time.Second}
-	value, rawValue, err := provider.EvaluateQuery(ctx, *metric, *metricProvider)
-	if err != nil {
-		r.Log.Error(err, "Failed to evaluate the query", "Response from provider was:", (string)(rawValue))
-		metric.Status.ErrMsg = err.Error()
-		metric.Status.Value = ""
-		metric.Status.RawValue = cupSize(rawValue)
-		metric.Status.LastUpdated = metav1.Time{Time: time.Now()}
-		reconcile = ctrl.Result{Requeue: false}
+	if metric.Spec.Range.Step != "" {
+		value, rawValue, err := provider.EvaluateQueryForStep(ctx, *metric, *metricProvider)
 	} else {
-		metric.Status.Value = value
-		metric.Status.RawValue = cupSize(rawValue)
-		metric.Status.LastUpdated = metav1.Time{Time: time.Now()}
-	}
+		value, rawValue, err := provider.EvaluateQuery(ctx, *metric, *metricProvider)
+		if err != nil {
+			r.Log.Error(err, "Failed to evaluate the query", "Response from provider was:", (string)(rawValue))
+			metric.Status.ErrMsg = err.Error()
+			metric.Status.Value = ""
+			metric.Status.RawValue = cupSize(rawValue)
+			metric.Status.LastUpdated = metav1.Time{Time: time.Now()}
+			reconcile = ctrl.Result{Requeue: false}
+		} else {
+			metric.Status.Value = value
+			metric.Status.RawValue = cupSize(rawValue)
+			metric.Status.LastUpdated = metav1.Time{Time: time.Now()}
+		}
 
-	if err := r.Client.Status().Update(ctx, metric); err != nil {
-		r.Log.Error(err, "Failed to update the Metric status")
-		return ctrl.Result{}, err
+		if err := r.Client.Status().Update(ctx, metric); err != nil {
+			r.Log.Error(err, "Failed to update the Metric status")
+			return ctrl.Result{}, err
+		}
 	}
 
 	return reconcile, err
